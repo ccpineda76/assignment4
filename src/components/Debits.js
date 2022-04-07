@@ -20,6 +20,25 @@ class Debits extends Component {
 
   }
 
+  componentDidMount() {
+    let binData = null;
+    // THIS PORTION PARSES THROUGH DEBITS API AND APPENDS IT TO OUR EMPTY STATEMENT LIST ARRAY
+    fetch('https://moj-api.herokuapp.com/debits')
+      .then(result => result.json())
+      .then(data => {
+        binData = data;
+        for (let i = 0; i < 10; i++) {
+          var joined = this.state.statement_list.concat('$' + binData[i].amount + ' ' + binData[i].description + ' ' + binData[i].date.slice(0, 10));
+          this.setState({
+            statement_list: joined
+          })
+          this.setState({
+            total_debit: this.state.total_debit + binData[i].amount
+          })
+        }
+      });
+  }
+
   update(event) {
     this.setState({
       statement: event.target.value
