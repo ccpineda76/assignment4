@@ -1,5 +1,4 @@
 // src/components/Credits.js
-//import AccountBalance from './AccountBalance';
 import React, { Component } from 'react';
 
 class Credits extends Component {
@@ -12,9 +11,28 @@ class Credits extends Component {
             credit_value: '',
             total_credit: 0
         };
+        //BINDING THIS TO MAKE FUNCTIONS WORK
         this.update = this.update.bind(this);
         this.addCredit = this.addCredit.bind(this);
         this.numeric_update = this.numeric_update.bind(this);
+    }
+    componentDidMount() {
+        let binData = null;
+        // THIS PORTION PARSES THROUGH DEBITS API AND APPENDS IT TO OUR EMPTY STATEMENT LIST ARRAY
+        fetch('https://moj-api.herokuapp.com/credits')
+            .then(result => result.json())
+            .then(data => {
+                binData = data;
+                for (let i = 0; i < 10; i++) {
+                    var joined = this.state.statement_list.concat('$' + binData[i].amount + ' ' + binData[i].description + ' ' + binData[i].date.slice(0, 10));
+                    this.setState({
+                        statement_list: joined
+                    })
+                    this.setState({
+                        total_credit: this.state.total_credit + binData[i].amount
+                    })
+                }
+            });
     }
 
     update(event) {
@@ -55,9 +73,9 @@ class Credits extends Component {
                 <h1>Credits</h1>
                 <ul>
                     {
-                        this.state.statement_list.map((statements) => (
-                            <li>{statements}</li>
-                        ))
+                        this.state.statement_list.map((statements) => {
+                            return <li>{statements}</li>
+                        })
                     }
                 </ul>
                 <label>Amount</label>
