@@ -1,6 +1,7 @@
 // src/components/Debits.js
 //import AccountBalance from './AccountBalance';
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 
 class Debits extends Component {
   constructor(props) {
@@ -17,7 +18,6 @@ class Debits extends Component {
     this.update = this.update.bind(this);
     this.addDebit = this.addDebit.bind(this);
     this.numeric_update = this.numeric_update.bind(this);
-
   }
 
   componentDidMount() {
@@ -35,6 +35,10 @@ class Debits extends Component {
           this.setState({
             total_debit: this.state.total_debit + binData[i].amount
           })
+          //Updating Parent Debit Balance 
+          this.props.updateDebit(binData[i].amount) 
+          //Updating Parent Account Balance 
+          this.props.updateAccountBalance((this.props.accountBalance - binData[i].amount))
         }
       });
   }
@@ -69,10 +73,14 @@ class Debits extends Component {
         total_debit: prev.total_debit + convert //Add the inputted value into the total debit value
       };
     });// EQUIVALENT OF THIS CODE: this.state.total_debit += convert;
+
+    //Updating Debit value to parent
+    this.props.updateDebit(parseFloat(this.state.debit_value));
+    // Updating accountBalance value to parent
+    this.props.updateAccountBalance(this.props.accountBalance - (parseFloat(this.state.debit_value)))
   }
 
   render() {
-    let balance = this.props.accountBalance - this.state.total_debit;
     return (
       <div>
         <h1>Debits</h1>
@@ -90,8 +98,9 @@ class Debits extends Component {
         <button
           type="button"
           onClick={this.addDebit}>Add Statement</button>
-        <h2>Total Debit Value: {this.state.total_debit}</h2>
-        <h3>Account Balance: {balance}</h3>
+        <h2>Total Debit Value: {this.props.debitBalance}</h2>
+        <h3>Account Balance: {this.props.accountBalance}</h3>
+        <Link to="/credits">Credits </Link>
       </div>
     )
   }

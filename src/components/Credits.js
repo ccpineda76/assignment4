@@ -1,5 +1,6 @@
 // src/components/Credits.js
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 
 class Credits extends Component {
     constructor(props) {
@@ -31,6 +32,10 @@ class Credits extends Component {
                     this.setState({
                         total_credit: this.state.total_credit + binData[i].amount
                     })
+                    //Updating Parent Credit Balance 
+                    this.props.updateCredit(binData[i].amount)
+                    //Updating Parent Account Balance
+                    this.props.updateAccountBalance((this.props.accountBalance + binData[i].amount))
                 }
             });
     }
@@ -64,6 +69,11 @@ class Credits extends Component {
                 total_credit: prev.total_credit + conversion //Add the inputted value into the total credit value
             };
         });// EQUIVALENT OF THIS CODE: this.state.total_credit += conversion;
+        
+        //Updating Credit value to parent
+    this.props.updateCredit(parseFloat(this.state.credit_value));
+    // Updating accountBalance value to parent
+    this.props.updateAccountBalance(this.props.accountBalance + (parseFloat(this.state.credit_value)))
     }
 
     render() {
@@ -85,8 +95,9 @@ class Credits extends Component {
                 <button
                     type="button"
                     onClick={this.addCredit}>Add Statement</button>
-                <h2>Total Credit Value: {this.state.total_credit}</h2>
-                <h3>Account Balance: {balance}</h3>
+                <h2>Total Credit Value: {this.props.creditBalance}</h2>
+                <h3>Account Balance: {this.props.accountBalance}</h3>
+                <Link to="/Debits">Debits </Link>
             </div>
         )
     }
