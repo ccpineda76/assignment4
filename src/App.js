@@ -62,10 +62,10 @@ class App extends Component {
             accountBalance: this.state.accountBalance + credit_data[i].amount
           })
         }
+        this.setState({
+          accountBalance: this.state.accountBalance.toFixed(2)
+        })
       });
-    // this.setState({
-    //   accountBalance: this.state.debitBalance
-    // })
   }
 
   //////////////////////////////////////////////////////////////////////////////ADD CREDIT IMPLEMENTATION///////////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ class App extends Component {
       credit_statement={this.state.credit_statement}
       credit_update={this.credit_update}
       credit_numeric_update={this.credit_numeric_update}
-      debitBalance = {this.state.debitBalance}
+      debitBalance={this.state.debitBalance}
       addCredit={this.addCredit}
     />);
     //Creating Debit Implementation
@@ -204,7 +204,7 @@ class App extends Component {
         addDebit={this.addDebit}
         debit_value={this.state.debit_value}
         debit_statement={this.state.debit_statement}
-        creditBalance = {this.state.creditBalance}
+        creditBalance={this.state.creditBalance}
       />
     );
 

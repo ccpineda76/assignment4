@@ -1,6 +1,7 @@
 // src/components/Credits.js
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import './leftside.css'
 
 class Credits extends Component {
     constructor(props) {
@@ -12,7 +13,11 @@ class Credits extends Component {
     render() {
         return (
             <div>
+                <Link to="/" className='HomeButton'>Home</Link>
                 <h1>Credits</h1>
+                <h4 className='debit'>Total Debit Value: {this.props.debitBalance}</h4>
+                <h4 className='credit'>Total Credit Value: {this.props.creditBalance}</h4>
+                <h4 className='account'>Account Balance: {this.props.accountBalance}</h4>
                 <ul>
                     {
                         this.props.credit_array.map((statements) => {
@@ -27,12 +32,7 @@ class Credits extends Component {
                 <button
                     type="button"
                     onClick={this.props.addCredit}>Add Statement</button>
-                <h2>Total Credit Value: {this.props.creditBalance}</h2>
-                <h3>Total Debit Value: {this.props.debitBalance}</h3>
-                <h4>Account Balance: {this.props.accountBalance}</h4>
-                <Link to="/Debits">Debits </Link>
-                <br/>
-                <Link to = "/">Home</Link>
+                <Link to="/Debits" className='Linkclass'>Debits Page </Link>
             </div>
         )
     }
