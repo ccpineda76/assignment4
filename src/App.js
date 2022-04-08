@@ -50,6 +50,7 @@ class App extends Component {
 
     ////////////////////////////////////////////////////////////////////////THIS IS FOR CREDIT VALUES////////////////////////////////////////////////////////////////////////////
     let credit_data = null;
+    let parsing = 0;
     fetch('https://moj-api.herokuapp.com/credits')
       .then(result => result.json())
       .then(data => {
@@ -62,8 +63,12 @@ class App extends Component {
             accountBalance: this.state.accountBalance + credit_data[i].amount
           })
         }
+        parsing = parseFloat(this.state.accountBalance);
         this.setState({
-          accountBalance: this.state.accountBalance.toFixed(2)
+          accountBalance: parsing.toFixed(2)
+        })
+        this.setState({
+          accountBalance: parseFloat(this.state.accountBalance)
         })
       });
   }
