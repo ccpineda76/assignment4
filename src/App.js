@@ -88,7 +88,7 @@ class App extends Component {
     let conversion = parseFloat(this.state.credit_value) //Converting string input into a float number
     this.setState(prev => {
       return {
-        creditBalance: prev.creditBalance + conversion, //Add the inputted value into the total credit value
+        creditBalance: parseFloat((prev.creditBalance + conversion).toFixed(2)), //Add the inputted value into the total credit value
         accountBalance: parseFloat((prev.accountBalance + conversion).toFixed(2)) // Add money to account balance when adding more credit
       };
     });// EQUIVALENT OF THIS CODE: this.state.creditBalance += conversion;
@@ -124,7 +124,7 @@ class App extends Component {
     let conversion = parseFloat(this.state.debit_value) //Converting string input into a float number
     this.setState(prev => {
       return {
-        debitBalance: prev.debitBalance + conversion, //Add the inputted value into the total debit value
+        debitBalance: parseFloat((prev.debitBalance + conversion).toFixed(2)), //Add the inputted value into the total debit value
         accountBalance: parseFloat((prev.accountBalance - conversion).toFixed(2)) // Remove money from account when adding debit
       };
     });// EQUIVALENT OF THIS CODE: this.state.debitBalance += conversion;
