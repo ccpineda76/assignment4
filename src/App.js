@@ -11,9 +11,9 @@ class App extends Component {
   constructor(props) {  // Create and initialize state
     super(props);
     this.state = {
-      accountBalance: 0,
-      debitBalance: 0,
-      creditBalance: 0,
+      accountBalance: 0.0,
+      debitBalance: 0.0,
+      creditBalance: 0.0,
       // DEBIT PORTION //
       debit_statement: '',
       debit_value: '',
@@ -30,47 +30,34 @@ class App extends Component {
   }
 
   componentDidMount() {
-    /////////////////////////////////THIS IS FOR DEBIT VALUES /////////////////////////////////////////////
-    let debit_data = null;
-    // THIS PORTION PARSES THROUGH DEBITS API AND APPENDS IT TO OUR EMPTY STATEMENT LIST ARRAY
-    fetch('https://moj-api.herokuapp.com/debits')
-      .then(result => result.json())
-      .then(data => {
-        debit_data = data;
+    //PROMISE ALL FETCHES AT THE SAME TIME SO ONE FETCH DOES NOT OPERATE OVER THE OTHER, IN OTHER WORDS, DO THIS SO THE CODE ACTUALLY WORKS IN ORDER
+    Promise.all([
+      fetch('https://moj-api.herokuapp.com/debits').then(value => value.json()),
+      fetch('https://moj-api.herokuapp.com/credits').then(value => value.json())
+    ])
+      .then((value => {
+        //SPLITTING VALUE ARRAY TO TWO NEW ARRAYS
+        let debit_promise = value[0] //Getting Debit API
+        let credit_promise = value[1] //Getting Credit API
         for (let i = 0; i < 10; i++) {
-          var joined = this.state.debit_array.concat('$' + debit_data[i].amount + ' ' + debit_data[i].description + ' ' + debit_data[i].date.slice(0, 10));
+          //Setting array for Debit API
+          var joined = this.state.debit_array.concat('$' + debit_promise[i].amount + ' ' + debit_promise[i].description + ' ' + debit_promise[i].date.slice(0, 10));
+          //Setting array for Credit API
+          var joined_2 = this.state.credit_array.concat('$' + credit_promise[i].amount + ' ' + credit_promise[i].description + ' ' + credit_promise[i].date.slice(0, 10));
           this.setState({
             debit_array: joined,
-            debitBalance: this.state.debitBalance + debit_data[i].amount,
-            accountBalance: this.state.accountBalance - debit_data[i].amount
-          })
-        }
-      });
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////////////////THIS IS FOR CREDIT VALUES////////////////////////////////////////////////////////////////////////////
-    let credit_data = null;
-    let parsing = 0;
-    fetch('https://moj-api.herokuapp.com/credits')
-      .then(result => result.json())
-      .then(data => {
-        credit_data = data;
-        for (let i = 0; i < 10; i++) {
-          var joined_2 = this.state.credit_array.concat('$' + credit_data[i].amount + ' ' + credit_data[i].description + ' ' + credit_data[i].date.slice(0, 10));
-          this.setState({
             credit_array: joined_2,
-            creditBalance: this.state.creditBalance + credit_data[i].amount,
-            accountBalance: this.state.accountBalance + credit_data[i].amount
+            debitBalance: this.state.debitBalance + debit_promise[i].amount,
+            creditBalance: this.state.creditBalance + credit_promise[i].amount
           })
         }
-        parsing = parseFloat(this.state.accountBalance);
+        let round = this.state.creditBalance - this.state.debitBalance;
+        round = round.toFixed(2);
+        round = parseFloat(round);
         this.setState({
-          accountBalance: parsing.toFixed(2)
+          accountBalance: round
         })
-        this.setState({
-          accountBalance: parseFloat(this.state.accountBalance)
-        })
-      });
+      }))
   }
 
   //////////////////////////////////////////////////////////////////////////////ADD CREDIT IMPLEMENTATION///////////////////////////////////////////////////////////////////////
@@ -102,7 +89,7 @@ class App extends Component {
     this.setState(prev => {
       return {
         creditBalance: prev.creditBalance + conversion, //Add the inputted value into the total credit value
-        accountBalance: prev.accountBalance + conversion // Add money to account balance when adding more credit
+        accountBalance: parseFloat((prev.accountBalance + conversion).toFixed(2)) // Add money to account balance when adding more credit
       };
     });// EQUIVALENT OF THIS CODE: this.state.creditBalance += conversion;
   }
@@ -138,7 +125,7 @@ class App extends Component {
     this.setState(prev => {
       return {
         debitBalance: prev.debitBalance + conversion, //Add the inputted value into the total debit value
-        accountBalance: prev.accountBalance - conversion // Remove money from account when adding debit
+        accountBalance: parseFloat((prev.accountBalance - conversion).toFixed(2)) // Remove money from account when adding debit
       };
     });// EQUIVALENT OF THIS CODE: this.state.debitBalance += conversion;
   }
