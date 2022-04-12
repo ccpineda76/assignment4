@@ -173,7 +173,7 @@ class App extends Component {
     );
 
     return (
-      <Router>
+      <Router basename="/assignment4">  
         <div>
           <Route exact path="/" render={HomeComponent} />
           <Route exact path="/userProfile" render={UserProfileComponent} />
